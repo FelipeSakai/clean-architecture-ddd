@@ -3,7 +3,7 @@
     "target": "es2022",
     "module": "node16",
     "moduleResolution": "node16",
-    "rootDir": "./src",
+    "rootDir": "./",
     "paths": {
       "@/*": [
         "./src/*"
@@ -11,7 +11,8 @@
     },
     "outDir": "./dist",
     "types": [
-      "node"
+      "node",
+      "vitest/globals"
     ],
     "sourceMap": true,
     "declaration": true,
@@ -26,7 +27,8 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "test/**/*.ts"
   ],
   "exclude": [
     "node_modules",

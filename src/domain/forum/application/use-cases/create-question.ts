@@ -1,6 +1,5 @@
 import { UniqueEntityId } from '@/core/entities/unique-entity-id.js'
 import { Question } from '../../enterprise/entities/question.js'
-import { AnswersRepository } from '../repositories/answers-repository.js'
 import { QuestionRepository } from '../repositories/question-repository.js'
 
 
