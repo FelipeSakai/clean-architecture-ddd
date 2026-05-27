@@ -9,14 +9,14 @@ export class InMemoryQuestionsRepository implements QuestionsRepository {
         return question || null
     }
 
-    async findManyRecent(options: { page: number }): Promise<Question[]> {
+    async findManyRecent(options: { page: number }) {
         const questions = this.items
             .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
             .slice((options.page - 1) * 20, options.page * 20)
         return questions
     }
 
-    async create(question: Question): Promise<void> {
+    async create(question: Question) {
         this.items.push(question)
     }
 

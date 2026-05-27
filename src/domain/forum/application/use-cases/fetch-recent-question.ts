@@ -12,11 +12,8 @@ interface FetchRecentQuestionUseCaseResponse {
 }
 
 export class FetchRecentQuestionUseCase {
-    private questionsRepository: QuestionsRepository
-
-    constructor(questionsRepository: QuestionsRepository) {
-        this.questionsRepository = questionsRepository
-    }
+    constructor(
+        private questionsRepository: QuestionsRepository) { }
 
     async execute({
         page
