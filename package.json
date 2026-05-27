@@ -1,6 +1,7 @@
 {
   "name": "cleanarch-ddd",
   "version": "1.0.0",
+  "packageManager": "pnpm@11.3.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -16,6 +17,7 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "@faker-js/faker": "^10.4.0",
     "@rocketseat/eslint-config": "^2.2.2",
     "@types/node": "^25.6.0",
     "eslint": "^8.57.1",
