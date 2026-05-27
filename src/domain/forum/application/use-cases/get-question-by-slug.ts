@@ -1,6 +1,6 @@
-import { UniqueEntityId } from '@/core/entities/unique-entity-id.js'
-import { Question } from '../../enterprise/entities/question.js'
-import { QuestionRepository } from '../repositories/question-repository.js'
+import { UniqueEntityId } from '@/core/entities/unique-entity-id'
+import { Question } from '../../enterprise/entities/question'
+import { QuestionsRepository } from '../repositories/questions-repository'
 
 
 interface GetQuestionBySlugUseCaseRequest {
@@ -12,16 +12,16 @@ interface GetQuestionBySlugUseCaseResponse {
 }
 
 export class GetQuestionBySlugUseCase {
-    private questionRepository: QuestionRepository
+    private questionsRepository: QuestionsRepository
 
-    constructor(questionRepository: QuestionRepository) {
-        this.questionRepository = questionRepository
+    constructor(questionsRepository: QuestionsRepository) {
+        this.questionsRepository = questionsRepository
     }
 
     async execute({
         slug
     }: GetQuestionBySlugUseCaseRequest): Promise<GetQuestionBySlugUseCaseResponse> {
-        const question = await this.questionRepository.findBySlug(slug)
+        const question = await this.questionsRepository.findBySlug(slug)
 
         if (!question) {
             throw new Error('Question not found')

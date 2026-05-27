@@ -1,18 +1,18 @@
 import { InMemoryQuestionsRepository } from '../../../../../test/repositories/in-memory-questions-repository'
 import { makeQuestion } from '../../../../../test/factories/make-question'
-import { DeleteQuestionUseCase } from './delete-question'
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
+import { EditQuestionUseCase } from './edit-question'
 
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository
-let sut: DeleteQuestionUseCase
+let sut: EditQuestionUseCase
 
 
-describe('Delete Question', () => {
+describe('Edit Question', () => {
     beforeEach(() => {
         inMemoryQuestionsRepository = new InMemoryQuestionsRepository()
-        sut = new DeleteQuestionUseCase(inMemoryQuestionsRepository)
+        sut = new EditQuestionUseCase(inMemoryQuestionsRepository)
     })
-    it('should be able to delete a question', async () => {
+    it('should be able to edit a question', async () => {
         const newQuestion = await makeQuestion({
             authorId: new UniqueEntityId('author-1')
         }, new UniqueEntityId('question-1'))
@@ -20,13 +20,18 @@ describe('Delete Question', () => {
 
         await sut.execute({
             questionId: 'question-1',
-            authorId: 'author-1'
+            authorId: 'author-1',
+            title: 'Título editado',
+            content: 'Conteúdo editado'
         })
 
-        expect(inMemoryQuestionsRepository.items).toHaveLength(0)
+        expect(inMemoryQuestionsRepository.items[0]).toMatchObject({
+            title: 'Título editado',
+            content: 'Conteúdo editado'
+        })
     })
 
-    it('should not be able to delete a question from another author', async () => {
+    it('should not be able to edit a question from another author', async () => {
         const newQuestion = await makeQuestion({
             authorId: new UniqueEntityId('author-1')
         }, new UniqueEntityId('question-1'))
@@ -34,7 +39,9 @@ describe('Delete Question', () => {
 
         await expect(sut.execute({
             questionId: 'question-1',
-            authorId: 'author-2'
+            authorId: 'author-2',
+            title: 'Título editado',
+            content: 'Conteúdo editado'
         })).rejects.toBeInstanceOf(Error)
 
         expect(inMemoryQuestionsRepository.items).toHaveLength(1)

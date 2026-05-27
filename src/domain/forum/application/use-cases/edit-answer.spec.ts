@@ -1,18 +1,18 @@
-import { makeAnswer } from '../../../../../test/factories/make-answer'
 import { InMemoryAnswersRepository } from '../../../../../test/repositories/in-memory-answers-repository'
-import { DeleteAnswerUseCase } from './delete-answer'
+import { makeAnswer } from '../../../../../test/factories/make-answer'
 import { UniqueEntityId } from '@/core/entities/unique-entity-id'
+import { EditAnswerUseCase } from './edit-answer'
 
 let inMemoryAnswersRepository: InMemoryAnswersRepository
-let sut: DeleteAnswerUseCase
+let sut: EditAnswerUseCase
 
 
-describe('Delete Answer', () => {
+describe('Edit Answer', () => {
     beforeEach(() => {
         inMemoryAnswersRepository = new InMemoryAnswersRepository()
-        sut = new DeleteAnswerUseCase(inMemoryAnswersRepository)
+        sut = new EditAnswerUseCase(inMemoryAnswersRepository)
     })
-    it('should be able to delete a answer', async () => {
+    it('should be able to edit a answer', async () => {
         const newAnswer = await makeAnswer({
             authorId: new UniqueEntityId('author-1')
         }, new UniqueEntityId('answer-1'))
@@ -20,13 +20,16 @@ describe('Delete Answer', () => {
 
         await sut.execute({
             answerId: 'answer-1',
-            authorId: 'author-1'
+            authorId: 'author-1',
+            content: 'Conteúdo editado'
         })
 
-        expect(inMemoryAnswersRepository.items).toHaveLength(0)
+        expect(inMemoryAnswersRepository.items[0]).toMatchObject({
+            content: 'Conteúdo editado'
+        })
     })
 
-    it('should not be able to delete a answer from another author', async () => {
+    it('should not be able to edit a answer from another author', async () => {
         const newAnswer = await makeAnswer({
             authorId: new UniqueEntityId('author-1')
         }, new UniqueEntityId('answer-1'))
@@ -34,7 +37,8 @@ describe('Delete Answer', () => {
 
         await expect(sut.execute({
             answerId: 'answer-1',
-            authorId: 'author-2'
+            authorId: 'author-2',
+            content: 'Conteúdo editado'
         })).rejects.toBeInstanceOf(Error)
 
         expect(inMemoryAnswersRepository.items).toHaveLength(1)
