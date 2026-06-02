@@ -18,4 +18,10 @@ export class InMemoryQuestionCommentRepository implements QuestionCommentsReposi
             this.items.splice(itemIndex, 1)
         }
     }
+    async findManyByQuestionId(questionId: string, params: { page: number }) {
+        const questionComments = this.items
+            .filter(item => item.questionId.toString() === questionId)
+            .slice((params.page - 1) * 20, params.page * 20)
+        return questionComments
+    }
 }
