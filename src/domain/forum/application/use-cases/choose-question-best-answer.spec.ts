@@ -36,7 +36,12 @@ describe('Choose Question Best Answer', () => {
             authorId: 'author-1'
         })
 
-        expect(result.question.bestAnswerId).toEqual(answer.id)
+        expect(result.isRight()).toBe(true)
+
+        if (result.isRight()) {
+            expect(result.value.question.bestAnswerId).toEqual(answer.id)
+        }
+
         expect(inMemoryQuestionsRepository.items[0]?.bestAnswerId).toEqual(answer.id)
     })
 
@@ -51,12 +56,13 @@ describe('Choose Question Best Answer', () => {
         await inMemoryQuestionsRepository.create(question)
         await inMemoryAnswersRepository.create(answer)
 
-        await expect(sut.execute({
+        const result = await sut.execute({
             answerId: 'answer-1',
             authorId: 'author-2'
-        })).rejects.toBeInstanceOf(Error)
+        })
+
+        expect(result.isLeft()).toBe(true)
 
         expect(inMemoryQuestionsRepository.items[0]?.bestAnswerId).toBeUndefined()
     })
 })
-

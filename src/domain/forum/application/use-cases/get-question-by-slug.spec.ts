@@ -18,11 +18,15 @@ describe('Get Question by Slug', () => {
         })
         await inMemoryQuestionsRepository.create(newQuestion)
 
-        const { question } = await sut.execute({
+        const result = await sut.execute({
             slug: 'nova-pergunta'
         })
 
-        expect(question.id).toBeTruthy()
-        expect(inMemoryQuestionsRepository.items[0]?.id).toEqual(question.id)
+        expect(result.isRight()).toBe(true)
+
+        if (result.isRight()) {
+            expect(result.value.question.id).toBeTruthy()
+            expect(inMemoryQuestionsRepository.items[0]?.id).toEqual(result.value.question.id)
+        }
     })
 })

@@ -32,10 +32,12 @@ describe('Delete Question', () => {
         }, new UniqueEntityId('question-1'))
         await inMemoryQuestionsRepository.create(newQuestion)
 
-        await expect(sut.execute({
+        const result = await sut.execute({
             questionId: 'question-1',
             authorId: 'author-2'
-        })).rejects.toBeInstanceOf(Error)
+        })
+
+        expect(result.isLeft()).toBe(true)
 
         expect(inMemoryQuestionsRepository.items).toHaveLength(1)
     })

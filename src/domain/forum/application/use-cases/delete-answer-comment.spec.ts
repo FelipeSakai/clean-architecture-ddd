@@ -32,11 +32,14 @@ describe('Delete Answer Comment', () => {
 
         await inMemoryAnswersCommentsRepository.create(answerComment)
 
-        expect(() => sut.execute({
+
+        const result = await sut.execute({
             answerCommentId: answerComment.id.toString(),
             authorId: 'wrong-author-id'
-        })).rejects.toBeInstanceOf(Error)
+        })
 
+        expect(result.isLeft()).toBe(true)
+        expect(result.value).toBeInstanceOf(Error)
     })
 })
 

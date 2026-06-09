@@ -35,11 +35,13 @@ describe('Edit Answer', () => {
         }, new UniqueEntityId('answer-1'))
         await inMemoryAnswersRepository.create(newAnswer)
 
-        await expect(sut.execute({
+        const result = await sut.execute({
             answerId: 'answer-1',
             authorId: 'author-2',
             content: 'Conteúdo editado'
-        })).rejects.toBeInstanceOf(Error)
+        })
+
+        expect(result.isLeft()).toBe(true)
 
         expect(inMemoryAnswersRepository.items).toHaveLength(1)
     })
