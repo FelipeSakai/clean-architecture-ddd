@@ -2,14 +2,16 @@ import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 import { FetchAnswerCommentsUseCase } from './fetch-answer-comment'
 import { makeAnswerComment } from '../../../../../test/factories/make-answer-comment'
 import { InMemoryAnswerCommentRepository } from '../../../../../test/repositories/in-memory-answers-comments-repository'
+import { InMemoryAnswerAttachmentRepository } from '../../../../../test/repositories/in-memory-answers-attachments-repository'
 
-
+let inMemoryAnswerAttachmentsRepository: InMemoryAnswerAttachmentRepository
 let inMemoryAnswerCommentRepository: InMemoryAnswerCommentRepository
 let sut: FetchAnswerCommentsUseCase
 
 
 describe('Fetch Answer Comments', () => {
     beforeEach(() => {
+        inMemoryAnswerAttachmentsRepository = new InMemoryAnswerAttachmentRepository()
         inMemoryAnswerCommentRepository = new InMemoryAnswerCommentRepository()
         sut = new FetchAnswerCommentsUseCase(inMemoryAnswerCommentRepository)
     })

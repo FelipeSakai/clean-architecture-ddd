@@ -1,8 +1,13 @@
 import { QuestionsRepository } from '../../src/domain/forum/application/repositories/questions-repository'
 import { Question } from '../../src/domain/forum/enterprise/entities/question'
+import { InMemoryQuestionAttachmentRepository } from './in-memory-question-attachments-repository'
 
 export class InMemoryQuestionsRepository implements QuestionsRepository {
     public items: Question[] = []
+
+    constructor(
+        private questionAttachmentsRepository?: InMemoryQuestionAttachmentRepository
+    ) { }
 
     async findById(id: string) {
         const question = this.items.find(item => item.id.toString() === id)
@@ -18,6 +23,7 @@ export class InMemoryQuestionsRepository implements QuestionsRepository {
 
     async create(question: Question) {
         this.items.push(question)
+        this.questionAttachmentsRepository?.items.push(...question.attachments.getItems())
     }
 
     async findBySlug(slug: string) {
@@ -31,6 +37,8 @@ export class InMemoryQuestionsRepository implements QuestionsRepository {
         if (itemIndex !== -1) {
             this.items.splice(itemIndex, 1)
         }
+
+        await this.questionAttachmentsRepository?.deleteManyByQuestionId(question.id.toString())
     }
 
     async save(question: Question) {
@@ -38,6 +46,8 @@ export class InMemoryQuestionsRepository implements QuestionsRepository {
 
         if (itemIndex !== -1) {
             this.items[itemIndex] = question
+            await this.questionAttachmentsRepository?.deleteManyByQuestionId(question.id.toString())
+            this.questionAttachmentsRepository?.items.push(...question.attachments.getItems())
         }
     }
 

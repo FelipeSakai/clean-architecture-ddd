@@ -2,11 +2,14 @@ import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 import { AnswersRepository } from '../repositories/answers-repository'
 import { Answer } from '../../enterprise/entities/answer'
 import { Either, right } from '@/core/either'
+import { AnswerAttachment } from '../../enterprise/entities/answer-attachement'
+import { AnswerAttachmentList } from '../../enterprise/entities/answer-attachment-list'
 
 interface AnswerQuestionUseCaseRequest {
   instructorId: string
   questionId: string
   content: string
+  attachmentsIds?: string[]
 }
 
 type AnswerQuestionUseCaseResponse = Either<
@@ -26,6 +29,7 @@ export class AnswerQuestionUseCase {
     instructorId,
     questionId,
     content,
+    attachmentsIds = []
   }: AnswerQuestionUseCaseRequest): Promise<AnswerQuestionUseCaseResponse> {
     const answer = Answer.create({
       content,
@@ -33,7 +37,16 @@ export class AnswerQuestionUseCase {
       questionId: new UniqueEntityId(questionId),
     })
 
+    const answerAttachments = attachmentsIds.map(attachmentsIds => {
+      return AnswerAttachment.create({
+        attachmentId: new UniqueEntityId(attachmentsIds),
+        answerId: answer.id
+      })
+    })
+
+    answer.attachments = new AnswerAttachmentList(answerAttachments)
     await this.answersRepository.create(answer)
+
     return right({
       answer,
     })

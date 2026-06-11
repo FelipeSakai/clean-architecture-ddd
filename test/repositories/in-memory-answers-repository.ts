@@ -1,11 +1,17 @@
 import { AnswersRepository } from '../../src/domain/forum/application/repositories/answers-repository'
 import { Answer } from '../../src/domain/forum/enterprise/entities/answer'
+import { InMemoryAnswerAttachmentRepository } from './in-memory-answers-attachments-repository'
 
 export class InMemoryAnswersRepository implements AnswersRepository {
     public items: Answer[] = []
 
+    constructor(
+        private answerAttachmentsRepository?: InMemoryAnswerAttachmentRepository
+    ) { }
+
     async create(answer: Answer) {
         this.items.push(answer)
+        this.answerAttachmentsRepository?.items.push(...answer.attachments.getItems())
     }
 
     async findById(id: string) {
@@ -26,6 +32,8 @@ export class InMemoryAnswersRepository implements AnswersRepository {
         if (itemIndex !== -1) {
             this.items.splice(itemIndex, 1)
         }
+
+        await this.answerAttachmentsRepository?.deleteManyByAnswerId(answer.id.toString())
     }
 
     async save(answer: Answer) {
@@ -33,6 +41,8 @@ export class InMemoryAnswersRepository implements AnswersRepository {
 
         if (itemIndex !== -1) {
             this.items[itemIndex] = answer
+            await this.answerAttachmentsRepository?.deleteManyByAnswerId(answer.id.toString())
+            this.answerAttachmentsRepository?.items.push(...answer.attachments.getItems())
         }
     }
 }
