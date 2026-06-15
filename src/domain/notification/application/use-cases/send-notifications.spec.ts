@@ -19,9 +19,16 @@ describe('Send Notification', () => {
         })
 
 
+        expect(result.isRight()).toBe(true)
+        expect(inMemoryNotificationsRepository.items).toHaveLength(1)
+
+        const notificationOnRepository = inMemoryNotificationsRepository.items[0]!
+
         if (result.isRight()) {
-            expect(result.isRight()).toBe(true)
-            expect(inMemoryNotificationsRepository.items[0]?.id).toEqual(result.value.notification.id)
+            expect(notificationOnRepository.id).toEqual(result.value.notification.id)
+            expect(notificationOnRepository.recipientId.toString()).toBe('1')
+            expect(notificationOnRepository.title).toBe('Nova notificacao')
+            expect(notificationOnRepository.content).toBe('Conteúdo da nova notificacao')
         }
     })
 })

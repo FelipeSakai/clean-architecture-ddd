@@ -25,16 +25,20 @@ describe('Read Notification', () => {
         })
 
 
+        expect(result.isRight()).toBe(true)
+        expect(inMemoryNotificationsRepository.items).toHaveLength(1)
+
+        const notificationOnRepository = inMemoryNotificationsRepository.items[0]!
+
         if (result.isRight()) {
-            expect(result.isRight()).toBe(true)
-            expect(inMemoryNotificationsRepository.items[0]?.readAt).toEqual(expect.any(Date))
+            expect(notificationOnRepository.readAt).toEqual(expect.any(Date))
         }
     })
 
     it('should not be able to read a notification from another user', async () => {
         const notification = await makeNotification({
             recipientId: new UniqueEntityId('recipient-1')
-        })
+        }, new UniqueEntityId('notification-1'))
 
         await inMemoryNotificationsRepository.create(notification)
 
