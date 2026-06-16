@@ -1,6 +1,7 @@
 import { QuestionsRepository } from '../../src/domain/forum/application/repositories/questions-repository'
 import { Question } from '../../src/domain/forum/enterprise/entities/question'
 import { InMemoryQuestionAttachmentRepository } from './in-memory-question-attachments-repository'
+import { DomainEvents } from '@/core/events/domain-events'
 
 export class InMemoryQuestionsRepository implements QuestionsRepository {
     public items: Question[] = []
@@ -48,6 +49,7 @@ export class InMemoryQuestionsRepository implements QuestionsRepository {
             this.items[itemIndex] = question
             await this.questionAttachmentsRepository?.deleteManyByQuestionId(question.id.toString())
             this.questionAttachmentsRepository?.items.push(...question.attachments.getItems())
+            DomainEvents.dispatchEventsForAggregate(question.id)
         }
     }
 

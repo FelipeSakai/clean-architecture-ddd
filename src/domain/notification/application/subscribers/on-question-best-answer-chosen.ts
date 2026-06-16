@@ -1,12 +1,13 @@
 import { DomainEvents } from "@/core/events/domain-events";
 import { EventHandler } from "@/core/events/event-handler";
-import { QuestionRepository } from "@/core/repositories/pagination-params";
 import { AnswerCreatedEvent } from "@/domain/forum/enterprise/events/answer-created-event";
 import { SendNotificationUseCase } from "../use-cases/send-notifications";
+import { AnswersRepository } from "@/domain/forum/application/repositories/answers-repository";
+import { QuestionBestAnswerChosenEvent } from "@/domain/forum/enterprise/events/question-best-answer-chosen-event";
 
-export class OnAnswerCreated implements EventHandler {
+export class OnQuestionBestAnswerChosen implements EventHandler {
     constructor(
-        private questionRepository: QuestionRepository,
+        private answerRepository: AnswersRepository,
         private sendNotification: SendNotificationUseCase
     ) {
         this.setupSubscriptions()
@@ -14,15 +15,15 @@ export class OnAnswerCreated implements EventHandler {
 
     setupSubscriptions(): void {
         DomainEvents.register(
-            this.sendNewAnswerNotification.bind(this),
-            AnswerCreatedEvent.name
+            this.sendQuestionBestAnswerChosenNotification.bind(this),
+            QuestionBestAnswerChosenEvent.name
         )
     }
 
-    private async sendNewAnswerNotification({ answer }: AnswerCreatedEvent) {
-        const question = await this.questionRepository.findById(answer.questionId.toString())
+    private async sendQuestionBestAnswerChosenNotification({ question, bestAnswerId }: QuestionBestAnswerChosenEvent) {
+        const answer = await this.answerRepository.findById(bestAnswerId.toString())
 
-        if (question) {
+        if (answer) {
             await this.sendNotification.execute({
                 recipientId: question.authorId.toString()!,
                 title: `New answer to ${question.title.substring(0, 40).concat('...')}`,
